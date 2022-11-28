@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Status Estacionamento | Estudo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h3>Histórico status estacionamento:</h3>
+      <table id="parkingTable">
+        <thead>
+          <tr>
+            <th>ID do hardware</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody id="parkingTableBody">
+          <tr></tr>
+        </tbody>
+      </table>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+
+      socket.on('connect_error', (err) => {
+        console.log(`connect_error due to ${err.message}`);
+      });
+
+      socket.on('parkData', function (data, callback) {
+        const tableRow = document.getElementById('park');
+
+        if (data) {
+          const tableBody = document.getElementById('parkingTableBody');
+          tableBody.innerHTML = '';
+
+          const table = document.getElementById('parkingTable');
+
+          const newRow = table.insertRow(1);
+          const idCell = newRow.insertCell(0);
+          const statusCell = newRow.insertCell(1);
+
+          idCell.innerHTML = data.hardwareId;
+          statusCell.innerHTML = data.isParked ? 'Ocupado' : 'Livre';
+        }
+      });
+    </script>
+  </body>
+</html>
